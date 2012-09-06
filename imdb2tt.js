@@ -15,6 +15,8 @@ $(document).ready(function(){
     movieName = $('title').text();
     tmdurl = '<a class="linkasbutton-secondary" href="http://torrentsmd.com/browse.php?imdb=' + movieId + '" target="_blank" title="On TMD"><img alt="On TMD" src="http://torrentsmd.com/favicon.ico" /></a>';
     ruturl = '<a class="linkasbutton-secondary" href="http://rutracker.org/forum/tracker.php?nm=' + movieName + '" target="_blank" title="On Rutracker"><img alt="On Rutracker" src="http://static.rutracker.org/favicon.ico" /></a>'
+    ytburl = '<a class="linkasbutton-secondary" href="https://www.youtube.com/results?search_query=' + movieName + ' trailer" target="_blank" title="Trailer on Youtube"><img alt="Trailer on Youtube" src="https://s.ytimg.com/yt/favicon-vfldLzJxy.ico" /></a>'
+    $('#action-box').append('<br/>' + ytburl);
     $('#action-box').append('<br/>' + tmdurl);
     $('#action-box').append(ruturl);
   }
