@@ -1,16 +1,16 @@
 // ==UserScript==
 // @name        IMDB+
-// @description Adds links to external sources of the same content, includind trailers on youtube, movie on kinopoisk, torrents on torrentsmd and torrents on rutracker
+// @description Adds links to external sources of the same content, includind trailers on youtube, movie on kinopoisk, torrents on torrentsmd/rutracker
 // @namespace   http://n-e-s.info/
 // @include     http://www.imdb.com/title/tt*
 // @require     http://code.jquery.com/jquery-latest.min.js
-// @version     2.0.1
+// @version     2.0.2
 // ==/UserScript==
 
 $(document).ready(function(){
   var m   = {};
   m.id    = location.pathname.match(/([0-9]{7})/g)[0]; // movie id
-  m.name  = escape((location.pathname.match(/combined/)) ? $('title').text() : $('title').text().replace(' - IMDb', '')); // movie name
+  m.name  = escape((location.pathname.match(/combined/)) ? $('title').text().replace(' (TV)', '') : $('#ratingWidget p strong').text()); // movie name
 
   var l = {}; // here goes the config for all features
   // l.ex  = ["name", "link url", "link title", "image url", "image text"];
