@@ -4,13 +4,13 @@
 // @namespace   http://n-e-s.info/
 // @include     http://www.imdb.com/title/tt*
 // @require     http://code.jquery.com/jquery-latest.min.js
-// @version     2.0
+// @version     2.0.1
 // ==/UserScript==
 
 $(document).ready(function(){
   var m   = {};
   m.id    = location.pathname.match(/([0-9]{7})/g)[0]; // movie id
-  m.name  = (location.pathname.match(/combined/)) ? $('title').text() : $('title').text().replace(' - IMDb', ''); // movie name
+  m.name  = escape((location.pathname.match(/combined/)) ? $('title').text() : $('title').text().replace(' - IMDb', '')); // movie name
 
   var l = {}; // here goes the config for all features
   // l.ex  = ["name", "link url", "link title", "image url", "image text"];
