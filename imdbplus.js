@@ -4,14 +4,14 @@
 // @namespace   http://n-e-s.info/
 // @include     http://www.imdb.com/title/tt*
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
-// @version     3.0.1
+// @version     3.0.2
 // ==/UserScript==
 
 jQuery(document).ready(function($)
 {
   var m  = {};
   m.Id   = getMovieId();
-  m.Tt   = getMovieTt();
+  m.Tt   = getMovieTt();console.debug(m);
 
   var l = {};
   // l.ex  = ["name", "link url", "title or alt text", "image url"];
@@ -27,7 +27,7 @@ jQuery(document).ready(function($)
   function getMovieTt()
   {
     var title = document.title.replace(/^(.+) \((TV Series *)([0-9]{4})(.*)(- IMDb*)/gi, '$1 ($3)');
-    return title;
+    return encodeURIComponent(title);
   }
 
   function getMovieId()
