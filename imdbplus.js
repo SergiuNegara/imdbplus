@@ -7,60 +7,125 @@
 // @version     3.0.0
 // ==/UserScript==
 
-jQuery(document).ready(function($)
+jQuery('body').ready(function($)
 {
   var m  = {};
   m.Id   = getMovieId();
-  m.Tt   = getMovieTt()
+  m.Tt   = getMovieTt();
 
   var l = {};
-  // l.ex  = ["name", "link url", "title or alt text", "image url", "newtab{1,0}"];
-  l.tmd  = ["Torrentsmd", "http://torrentsmd.com/browse.php?imdb=" + m.Id, "On TMD", "tmd.ico", 1];
-  l.rut  = ["Rutracker", "http://rutracker.org/forum/tracker.php?nm=" + m.Tt, "On Rutracker", "rutracker.ico", 1];
-  l.yt   = ["Youtube", "https://www.youtube.com/results?search_query=" + m.Tt + " official trailer", "Trailer on Youtube", "youtube.ico", 1];
-  l.kp   = ["Kinopoisk", "http://www.kinopoisk.ru/index.php?first=yes&kp_query=" + m.Tt, "On Kinopoisk", "kinopoisk.ico", 1];
-  l.wiki = ["Wikipedia", "http://en.wikipedia.org/wiki/Special:Search?search=" + m.Tt, "Wiki", "wikipedia.ico", 1];
-  l.osub = ["OpenSubtitles", "http://www.opensubtitles.org/en/search/sublanguageid-all/imdbid-" + m.Id, "Subs on OpenSubtitles", "opensubs.ico", 1];
-  l.ssc  = ["Subscene", "http://subscene.com/s.aspx?q=" + m.Tt, "Subs on Subscene", "subscene.ico", 1];
-
-  l.opts = ["Settings", "#", "Open settings frame", "settings.ico", 0];
-
-
-  stylize(); // add script styles
-  imdbplus(); // do main action - add features to page
-
-  $('#ImdbPlus-Settings').click(function(c)
-  {
-    c.preventDefault();
-    console.log("clicked");
-  });
+  // l.ex  = ["name", "link url", "title or alt text", "image url"];
+  l.tmd  = ["Torrentsmd", "http://torrentsmd.com/browse.php?imdb=" + m.Id, "On TMD", "tmd.ico"];
+  l.rut  = ["Rutracker", "http://rutracker.org/forum/tracker.php?nm=" + m.Tt, "On Rutracker", "rutracker.ico"];
+  l.yt   = ["Youtube", "https://www.youtube.com/results?search_query=" + m.Tt + " official trailer", "Trailer on Youtube", "youtube.ico"];
+  l.kp   = ["Kinopoisk", "http://www.kinopoisk.ru/index.php?first=yes&kp_query=" + m.Tt, "On Kinopoisk", "kinopoisk.ico"];
+  l.wiki = ["Wikipedia", "http://en.wikipedia.org/wiki/Special:Search?search=" + m.Tt, "Wiki", "wikipedia.ico"];
+  l.osub = ["OpenSubs", "http://www.opensubtitles.org/en/search/sublanguageid-all/imdbid-" + m.Id, "Subs on OpenSubs", "opensubs.ico"];
+  l.ssc  = ["Subscene", "http://subscene.com/s.aspx?q=" + m.Tt, "Subs on Subscene", "subscene.ico"];
 
   // Functions
-  function getMovieTt() {
-    var title = document.title.match(/^(.*) \(/)[1];
+  function getMovieTt()
+  {
+    var title = document.title.replace(/^(.+) \((TV Series *)([0-9]{4})(.*)(- IMDb*)/gi, '$1 ($3)');
     return title;
   }
 
-  function getMovieId() {
+  function getMovieId()
+  {
     var id = location.pathname.match(/title\/tt(.*?)\//i)[1];
     return id;
   }
 
-  function stylize() {
+  function IMDbPlusStyle()
+  {
     var s = 
-      '#title-overview-widget #imdbplus{ padding: 5px 0 0 230px; }'+
-      '#title-overview-widget #imdbplus a{ margin: 5px 1px; }'+
-      '#title-overview-widget #imdbplus #ImdbPlus-Settings{ margin-left: 10px; }'+
-      '#action-box #imdbplus #ImdbPlus-Settings{ margin-top: 10px; }';
-    $("head").append("<style>" + s + "</style>");
+      '#title-overview-widget #IMDbPlus { padding: 5px 0 0 230px; }'+
+      '#title-overview-widget #IMDbPlus a { margin: 5px 1px; }'+
+      '#title-overview-widget #IMDbPlus #IMDbPlus-Feature-Settings { margin-left: 10px; }'+
+      '#action-box #IMDbPlus #IMDbPlus-Feature-Settings { margin-top: 10px; }'+
+
+      '#IMDbPlus-SettingsBox { display: none; margin-left: -404px; padding: 20px; position: fixed; top: 10%; left: 50%; width: 768px; z-index: 999; }'+
+      '#IMDbPlus-SettingsBox > h2 { font-size: 21px }'+
+      '#IMDbPlus-SettingsBox > h4 { font-size: 15px }'+
+      '#IMDbPlus-SettingsBox #IMDbPlus-Options { margin: 20px 0;}'+
+      '#IMDbPlus-SettingsBox #IMDbPlus-Options .IMDbPlus-OptionField label { display: inline-block; width: 100px; }'+
+      '#IMDbPlus-SettingsBox button { margin: 8px 0 0; }'+
+      '#IMDbPlus-SettingsBox #IMDbPlus-SettingsBox-Close { float: right; }';
+    GM_addStyle(s);
   }
 
-  function imdbplus() {
-    var h = '<div id="imdbplus"><hr><h4>IMDB+ Features:</h4>';
-    for (var i in l) {
-      h += '<a class="imdbplus-button linkasbutton-secondary" id="ImdbPlus-' + l[i][0] + '" href="' + l[i][1] + '"' + ((l[i][4]) ? ' target="_blank"' : '') + ' title="' + l[i][2] + '"><img alt="' + l[i][2] + '" src="http://img.n-e-s.info/imdbplus/' + l[i][3] + '" /></a>'; // add each feature from config
+  function IMDbPlusInit()
+  {
+    var fh, oh;
+    fh = '<div id="IMDbPlus"><hr><h4>IMDB+ Features:</h4>';
+    oh = '<div id="IMDbPlus-SettingsBox" class="aux-content-widget-2"><h2>IMDb+ Options</h2><h4>Control the features you want to show</h4><ul id="IMDbPlus-Options">';
+
+    for (var i in l)
+    {
+      if (GM_getValue("IMDbPlus-Option-" + l[i][0], 1))
+      {
+        fh += '<a class="IMDbPlus-Button linkasbutton-secondary" id="IMDbPlus-Feature-' + l[i][0] + '" href="' + l[i][1] + '" target="_blank" title="' + l[i][2] + '"><img alt="' + l[i][2] + '" src="http://img.n-e-s.info/imdbplus/' + l[i][3] + '"></a>';
+      }
+      oh += '<li id="IMDbPlus-Option-' + l[i][0] + '-Field" class="IMDbPlus-OptionField"><label for="IMDbPlus-Option-' + l[i][0] + '">' + l[i][0] + '</label> <input id="IMDbPlus-Option-' + l[i][0] + '" type="checkbox"' + ((GM_getValue("IMDbPlus-Option-" + l[i][0], 1)) ? ' checked' : '') + '></li>';
     }
-    h += '</div>';
-    $((location.pathname.match(/combined/)) ? '#action-box' : '#title-overview-widget').append(h);
+
+    fh += '<a class="IMDbPlus-Button linkasbutton-secondary" id="IMDbPlus-Feature-Settings" title="Open settings frame"><img alt="Settings" src="http://img.n-e-s.info/imdbplus/settings.ico"></a></div>';
+    oh +=
+    '</ul><hr>'+
+    '<button id="IMDbPlus-SettingsBox-Save" class="primary">Save</button>'+
+    '<button id="IMDbPlus-SettingsBox-Close" class="primary">Close</button>'+
+    '</div>'; // #IMDbPlus-SettingsBox
+
+    IMDbPlusStyle();
+
+    $((location.pathname.match(/combined/)) ? '#action-box' : '#title-overview-widget').append(fh);
+    $('body').append(oh);
   }
+
+  IMDbPlusInit();
+
+  function showOpts()
+  {
+    $('#wrapper').css('visibility', 'hidden').animate({ opacity: 0 }, 500);
+    $('#IMDbPlus-SettingsBox').show(500);
+  }
+
+  function hideOpts()
+  {
+    $('#IMDbPlus-SettingsBox').hide(500);
+    $('#wrapper').css('visibility', 'visible').animate({ opacity: 1 }, 500);
+  }
+
+  function saveOpts()
+  {
+    $('.IMDbPlus-OptionField').each(function()
+    {
+      var
+      inputElm = $('input', this),
+      inputId  = inputElm.attr('id');
+      GM_setValue(inputId, (inputElm.is(":checked") ? 1 : 0))
+    });
+    hideOpts();
+    window.location.reload();
+  }
+
+
+  $('#IMDbPlus-Feature-Settings').click(function()
+  {
+    showOpts();
+  });
+
+  $('#IMDbPlus-SettingsBox-Close').click(function()
+  {
+    hideOpts();
+  });
+
+  $('#IMDbPlus-SettingsBox-Save').click(function()
+  {
+    saveOpts();
+  });
+
+  $(document).keyup(function(e){
+    if(e.keyCode == 27) hideOpts();
+  });
 });
