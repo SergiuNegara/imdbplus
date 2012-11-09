@@ -4,10 +4,10 @@
 // @namespace   http://n-e-s.info/
 // @include     http://www.imdb.com/title/tt*
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
-// @version     3.0.0
+// @version     3.0.1
 // ==/UserScript==
 
-jQuery('body').ready(function($)
+jQuery(document).ready(function($)
 {
   var m  = {};
   m.Id   = getMovieId();
@@ -60,21 +60,21 @@ jQuery('body').ready(function($)
     fh = '<div id="IMDbPlus"><hr><h4>IMDB+ Features:</h4>';
     oh = '<div id="IMDbPlus-SettingsBox" class="aux-content-widget-2"><h2>IMDb+ Options</h2><h4>Control the features you want to show</h4><ul id="IMDbPlus-Options">';
 
-    for (var i in l)
+    $.each(l, function(key,val)
     {
-      if (GM_getValue("IMDbPlus-Option-" + l[i][0], 1))
+      if (GM_getValue("IMDbPlus-Option-" + val[0], 1))
       {
-        fh += '<a class="IMDbPlus-Button linkasbutton-secondary" id="IMDbPlus-Feature-' + l[i][0] + '" href="' + l[i][1] + '" target="_blank" title="' + l[i][2] + '"><img alt="' + l[i][2] + '" src="http://img.n-e-s.info/imdbplus/' + l[i][3] + '"></a>';
+        fh += '<a class="IMDbPlus-Button linkasbutton-secondary" id="IMDbPlus-Feature-' + val[0] + '" href="' + val[1] + '" target="_blank" title="' + val[2] + '"><img alt="' + val[2] + '" src="http://img.n-e-s.info/imdbplus/' + val[3] + '"></a>';
       }
-      oh += '<li id="IMDbPlus-Option-' + l[i][0] + '-Field" class="IMDbPlus-OptionField"><label for="IMDbPlus-Option-' + l[i][0] + '">' + l[i][0] + '</label> <input id="IMDbPlus-Option-' + l[i][0] + '" type="checkbox"' + ((GM_getValue("IMDbPlus-Option-" + l[i][0], 1)) ? ' checked' : '') + '></li>';
-    }
+      oh += '<li id="IMDbPlus-Option-' + val[0] + '-Field" class="IMDbPlus-OptionField"><label for="IMDbPlus-Option-' + val[0] + '">' + val[0] + '</label> <input id="IMDbPlus-Option-' + val[0] + '" type="checkbox"' + ((GM_getValue("IMDbPlus-Option-" + val[0], 1)) ? ' checked' : '') + '></li>';
+    });
 
     fh += '<a class="IMDbPlus-Button linkasbutton-secondary" id="IMDbPlus-Feature-Settings" title="Open settings frame"><img alt="Settings" src="http://img.n-e-s.info/imdbplus/settings.ico"></a></div>';
     oh +=
     '</ul><hr>'+
     '<button id="IMDbPlus-SettingsBox-Save" class="primary">Save</button>'+
     '<button id="IMDbPlus-SettingsBox-Close" class="primary">Close</button>'+
-    '</div>'; // #IMDbPlus-SettingsBox
+    '</div>';
 
     IMDbPlusStyle();
 
@@ -109,21 +109,10 @@ jQuery('body').ready(function($)
     window.location.reload();
   }
 
-
-  $('#IMDbPlus-Feature-Settings').click(function()
-  {
-    showOpts();
-  });
-
-  $('#IMDbPlus-SettingsBox-Close').click(function()
-  {
-    hideOpts();
-  });
-
-  $('#IMDbPlus-SettingsBox-Save').click(function()
-  {
-    saveOpts();
-  });
+  // Interactions
+  $('#IMDbPlus-Feature-Settings').click(showOpts);
+  $('#IMDbPlus-SettingsBox-Close').click(hideOpts);
+  $('#IMDbPlus-SettingsBox-Save').click(saveOpts);
 
   $(document).keyup(function(e){
     if(e.keyCode == 27) hideOpts();
