@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name        IMDB+
-// @description Adds links to external sources of the same content, includind trailers on youtube, movie on kinopoisk, torrents on torrentsmd/rutracker
+// @description Adds links to external sources of the same content, includind trailers on youtube, movie on kinopoisk, torrents on torrentsmd/rutracker and subs on opensubtitles/subscene. Every feature can be enabled/disabled in settings.
 // @namespace   http://n-e-s.info/
 // @include     http://www.imdb.com/title/tt*
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
-// @version     3.0.2
+// @updateURL   http://userscripts.org/scripts/source/133844.meta.js
+// @version     3.0.3
 // ==/UserScript==
 
 jQuery(document).ready(function($)
