@@ -8,8 +8,7 @@
 // @version     3.0.4
 // ==/UserScript==
 
-jQuery(document).ready(function($)
-{
+jQuery(document).ready(function ($) {
   var m  = {};
   m.Id   = getMovieId();
   m.Tt   = getMovieTt();
@@ -25,20 +24,17 @@ jQuery(document).ready(function($)
   l.ssc  = ["Subscene", "http://subscene.com/s.aspx?q=" + m.Tt, "Subs on Subscene", "subscene.ico"];
 
   // Functions
-  function getMovieTt()
-  {
+  function getMovieTt() {
     var title = document.title.replace(/^(.+) \((.*)([0-9]{4})(.*)$/gi, '$1 ($3)');
     return encodeURIComponent(title);
   }
 
-  function getMovieId()
-  {
+  function getMovieId() {
     var id = location.pathname.match(/title\/tt(.*?)\//i)[1];
     return id;
   }
 
-  function IMDbPlusStyle()
-  {
+  function IMDbPlusStyle() {
     var s = 
       '#title-overview-widget #IMDbPlus { padding: 5px 0 0 230px; }'+
       '#title-overview-widget #IMDbPlus a { margin: 5px 1px; }'+
@@ -55,14 +51,12 @@ jQuery(document).ready(function($)
     GM_addStyle(s);
   }
 
-  function IMDbPlusInit()
-  {
+  function IMDbPlusInit() {
     var fh, oh;
     fh = '<div id="IMDbPlus"><hr><h4>IMDB+ Features:</h4>';
     oh = '<div id="IMDbPlus-SettingsBox" class="aux-content-widget-2"><h2>IMDb+ Options</h2><h4>Control the features you want to show</h4><ul id="IMDbPlus-Options">';
 
-    $.each(l, function(key,val)
-    {
+    $.each(l, function (key,val) {
       if (GM_getValue("IMDbPlus-Option-" + val[0], 1))
       {
         fh += '<a class="IMDbPlus-Button linkasbutton-secondary" id="IMDbPlus-Feature-' + val[0] + '" href="' + val[1] + '" target="_blank" title="' + val[2] + '"><img alt="' + val[2] + '" src="http://img.n-e-s.info/imdbplus/' + val[3] + '"></a>';
