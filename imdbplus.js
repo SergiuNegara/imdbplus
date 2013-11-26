@@ -117,9 +117,9 @@ jQuery(document).ready(function ($) {
   }
 
   // Interactions
-  $('#IMDbPlus-Feature-Settings').click(showOpts);
-  $('#IMDbPlus-SettingsBox-Close').click(hideOpts);
-  $('#IMDbPlus-SettingsBox-Save').click(saveOpts);
+  $('#IMDbPlus-Feature-Settings').on("click", showOpts);
+  $('#IMDbPlus-SettingsBox-Close').on("click", hideOpts);
+  $('#IMDbPlus-SettingsBox-Save').on("click", saveOpts);
 
   $(document).keyup(function (e) {
     if(e.keyCode == 27) hideOpts();
