@@ -8,7 +8,7 @@
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @grant       GM_addStyle
-// @version     4.0.1
+// @version     4.0.2
 // ==/UserScript==
 
 jQuery(document).ready(function ($) {
@@ -26,14 +26,14 @@ jQuery(document).ready(function ($) {
   l.yt   = ["Youtube", "https://www.youtube.com/results?search_query=" + m.TtYr, "youtube.ico"];
   l.mpdb = ["MoviePosterDB", "http://www.movieposterdb.com/movie/" + m.Id, "mpdb.ico"];
   l.kp   = ["Kinopoisk", "http://www.kinopoisk.ru/index.php?first=yes&kp_query=" + m.Tt, "kinopoisk.ico"];
-  l.cmg  = ["Cinemagia", "http://www.cinemagia.ro/cauta/?q=" + m.Tt, "cinemagia.jpg"];
-  l.crx  = ["CinemaRx", "http://www.cinemarx.ro/cauta/filme/" + m.Tt, "cinemarx.ico"];
-  l.allm = ["allMovie", "http://www.allmovie.com/search/movies/" + m.Tt, "allm.ico"];
+  l.cmg  = ["Cinemagia", "http://www.cinemagia.ro/cauta/?q=" + m.TtYr, "cinemagia.jpg"];
+  l.crx  = ["CinemaRx", "http://www.cinemarx.ro/cauta/filme/" + m.TtYr, "cinemarx.ico"];
+  l.allm = ["allMovie", "http://www.allmovie.com/search/movies/" + m.TtYr, "allm.ico"];
   l.rt   = ["Rotten Tomatoes", "http://www.rottentomatoes.com/alias?type=imdbid&s=" + m.Id, "rt.ico"];
-  l.wiki = ["Wikipedia", "http://en.wikipedia.org/wiki/Special:Search?search=" + m.Tt, "wikipedia.ico"];
+  l.wiki = ["Wikipedia", "http://en.wikipedia.org/wiki/" + m.Tt, "wikipedia.ico"];
   l.osub = ["OpenSubs", "http://www.opensubtitles.org/en/search/sublanguageid-all/imdbid-" + m.Id, "opensubs.ico"];
-  l.ssc  = ["Subscene", "http://subscene.com/s.aspx?q=" + m.Tt, "subscene.ico"];
-  l.ggl  = ["Google", "http://www.google.md/search?q=" + m.Tt, "google.ico"];
+  l.ssc  = ["Subscene", "http://subscene.com/s.aspx?q=" + m.TtYr, "subscene.ico"];
+  l.ggl  = ["Google", "http://www.google.md/search?q=" + m.TtYr, "google.ico"];
 
   // Functions
   function getMovieTt() {
