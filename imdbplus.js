@@ -1,31 +1,48 @@
 // ==UserScript==
 // @name        IMDB+
-// @description Adds links to external sources of the same content, includind trailers on youtube, movie on kinopoisk, torrents on torrentsmd/rutracker and subs on opensubtitles/subscene. Every feature can be enabled/disabled in settings.
+// @description Add external links to IMDb. Every feature can be enabled/disabled in settings.
 // @namespace   http://n-e-s.info/
 // @include     http://www.imdb.com/title/tt*
-// @require     http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
+// @require     http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js
 // @updateURL   http://userscripts.org/scripts/source/133844.meta.js
-// @version     3.0.4
+// @grant       GM_getValue
+// @grant       GM_setValue
+// @grant       GM_addStyle
+// @version     4.0.0
 // ==/UserScript==
 
 jQuery(document).ready(function ($) {
   var m  = {};
   m.Id   = getMovieId();
   m.Tt   = getMovieTt();
+  m.TtYr = getMovieTt() + "+" + getMovieYr();
 
   var l = {};
   // l.ex  = ["name", "link url", "title or alt text", "image url"];
-  l.tmd  = ["Torrentsmd", "http://torrentsmd.com/browse.php?imdb=" + m.Id, "On TMD", "tmd.ico"];
-  l.rut  = ["Rutracker", "http://rutracker.org/forum/tracker.php?nm=" + m.Tt, "On Rutracker", "rutracker.ico"];
-  l.yt   = ["Youtube", "https://www.youtube.com/results?search_query=" + m.Tt + " official trailer", "Trailer on Youtube", "youtube.ico"];
-  l.kp   = ["Kinopoisk", "http://www.kinopoisk.ru/index.php?first=yes&kp_query=" + m.Tt, "On Kinopoisk", "kinopoisk.ico"];
-  l.wiki = ["Wikipedia", "http://en.wikipedia.org/wiki/Special:Search?search=" + m.Tt, "Wiki", "wikipedia.ico"];
-  l.osub = ["OpenSubs", "http://www.opensubtitles.org/en/search/sublanguageid-all/imdbid-" + m.Id, "Subs on OpenSubs", "opensubs.ico"];
-  l.ssc  = ["Subscene", "http://subscene.com/s.aspx?q=" + m.Tt, "Subs on Subscene", "subscene.ico"];
+  l.tmd  = ["Torrentsmd", "http://torrentsmd.com/browse.php?imdb=" + m.Id, "tmd.ico"];
+  l.rut  = ["Rutracker", "http://rutracker.org/forum/tracker.php?nm=" + m.TtYr, "rutracker.ico"];
+  l.tz   = ["Torrentz", "http://torrentz.eu/search?f=" + m.TtYr, "torrentz.ico"];
+  l.tpb  = ["The Pirate Bay", "http://thepiratebay.sx/search/" +  m.TtYr + "/0/99/200", "tpb.ico"];
+  l.yt   = ["Youtube", "https://www.youtube.com/results?search_query=" + m.TtYr, "youtube.ico"];
+  l.mpdb = ["MoviePosterDB", "http://www.movieposterdb.com/movie/" + m.Id, "mpdb.ico"];
+  l.kp   = ["Kinopoisk", "http://www.kinopoisk.ru/index.php?first=yes&kp_query=" + m.Tt, "kinopoisk.ico"];
+  l.cmg  = ["Cinemagia", "http://www.cinemagia.ro/cauta/?q=" + m.Tt, "cinemagia.jpg"];
+  l.crx  = ["CinemaRx", "http://www.cinemarx.ro/cauta/filme/" + m.Tt, "cinemarx.ico"];
+  l.allm = ["allMovie", "http://www.allmovie.com/search/movies/" + m.Tt, "allm.ico"];
+  l.rt   = ["Rotten Tomatoes", "http://www.rottentomatoes.com/alias?type=imdbid&s=" + m.Id, "rt.ico"];
+  l.wiki = ["Wikipedia", "http://en.wikipedia.org/wiki/Special:Search?search=" + m.Tt, "wikipedia.ico"];
+  l.osub = ["OpenSubs", "http://www.opensubtitles.org/en/search/sublanguageid-all/imdbid-" + m.Id, "opensubs.ico"];
+  l.ssc  = ["Subscene", "http://subscene.com/s.aspx?q=" + m.Tt, "subscene.ico"];
+  l.ggl  = ["Google", "http://www.google.md/search?q=" + m.Tt, "google.ico"];
 
   // Functions
   function getMovieTt() {
-    var title = document.title.replace(/^(.+) \((.*)([0-9]{4})(.*)$/gi, '$1 ($3)');
+    var title = document.title.replace(/^(.+) \((.*)([0-9]{4})(.*)$/gi, '$1');
+    return encodeURIComponent(title);
+  }
+
+  function getMovieYr() {
+    var title = document.title.replace(/^(.+) \((.*)([0-9]{4})(.*)$/gi, '$3');
     return encodeURIComponent(title);
   }
 
@@ -45,7 +62,7 @@ jQuery(document).ready(function ($) {
       '#IMDbPlus-SettingsBox > h2 { font-size: 21px }'+
       '#IMDbPlus-SettingsBox > h4 { font-size: 15px }'+
       '#IMDbPlus-SettingsBox #IMDbPlus-Options { margin: 20px 0;}'+
-      '#IMDbPlus-SettingsBox #IMDbPlus-Options .IMDbPlus-OptionField label { display: inline-block; width: 100px; }'+
+      '#IMDbPlus-SettingsBox #IMDbPlus-Options .IMDbPlus-OptionField label { display: inline-block; width: 150px; }'+
       '#IMDbPlus-SettingsBox button { margin: 8px 0 0; }'+
       '#IMDbPlus-SettingsBox #IMDbPlus-SettingsBox-Close { float: right; }';
     GM_addStyle(s);
@@ -57,9 +74,8 @@ jQuery(document).ready(function ($) {
     oh = '<div id="IMDbPlus-SettingsBox" class="aux-content-widget-2"><h2>IMDb+ Options</h2><h4>Control the features you want to show</h4><ul id="IMDbPlus-Options">';
 
     $.each(l, function (key,val) {
-      if (GM_getValue("IMDbPlus-Option-" + val[0], 1))
-      {
-        fh += '<a class="IMDbPlus-Button linkasbutton-secondary" id="IMDbPlus-Feature-' + val[0] + '" href="' + val[1] + '" target="_blank" title="' + val[2] + '"><img alt="' + val[2] + '" src="http://img.n-e-s.info/imdbplus/' + val[3] + '"></a>';
+      if (GM_getValue("IMDbPlus-Option-" + val[0], 1)) {
+        fh += '<a class="IMDbPlus-Button linkasbutton-secondary" id="IMDbPlus-Feature-' + val[0] + '" href="' + val[1] + '" target="_blank" title="On ' + val[0] + '"><img alt="On ' + val[0] + '" src="http://img.n-e-s.info/imdbplus/' + val[2] + '"></a>';
       }
       oh += '<li id="IMDbPlus-Option-' + val[0] + '-Field" class="IMDbPlus-OptionField"><label for="IMDbPlus-Option-' + val[0] + '">' + val[0] + '</label> <input id="IMDbPlus-Option-' + val[0] + '" type="checkbox"' + ((GM_getValue("IMDbPlus-Option-" + val[0], 1)) ? ' checked' : '') + '></li>';
     });
@@ -79,22 +95,18 @@ jQuery(document).ready(function ($) {
 
   IMDbPlusInit();
 
-  function showOpts()
-  {
+  function showOpts() {
     $('#wrapper').css('visibility', 'hidden').animate({ opacity: 0 }, 500);
     $('#IMDbPlus-SettingsBox').show(500);
   }
 
-  function hideOpts()
-  {
+  function hideOpts() {
     $('#IMDbPlus-SettingsBox').hide(500);
     $('#wrapper').css('visibility', 'visible').animate({ opacity: 1 }, 500);
   }
 
-  function saveOpts()
-  {
-    $('.IMDbPlus-OptionField').each(function()
-    {
+  function saveOpts() {
+    $('.IMDbPlus-OptionField').each(function () {
       var
       inputElm = $('input', this),
       inputId  = inputElm.attr('id');
@@ -109,7 +121,7 @@ jQuery(document).ready(function ($) {
   $('#IMDbPlus-SettingsBox-Close').click(hideOpts);
   $('#IMDbPlus-SettingsBox-Save').click(saveOpts);
 
-  $(document).keyup(function(e){
+  $(document).keyup(function (e) {
     if(e.keyCode == 27) hideOpts();
   });
 });
